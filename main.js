@@ -5,9 +5,9 @@ function Deck() {
     this.deck = [];
 
     suits.forEach( suit => {
-        console.log(suit)
+        // console.log(suit)
         values.forEach( value => {
-            console.log(value)
+            // console.log(value)
             this.deck.push({
                 suit: suit,
                 value: value,
@@ -17,6 +17,8 @@ function Deck() {
         })
 
     })
+
+    // console.log(this.deck);
     // console.log({olddeck:this.deck});
 
         //shuffling deck
@@ -51,6 +53,7 @@ function Card(suit, value) {
 Card(suits[2], values[5]);
 
 
+
 function Player(hand) {
     // player's hand (array) passed from game
     // player's score (number of cards they have)
@@ -64,9 +67,15 @@ function Player(hand) {
     this.score = hand.length;
     this.cardsInPlay = [];
 
+
 console.log({topCard: this.topCard});
 console.log({score: this.score});
 }
+
+
+// if (Player.value === new Player.value) {
+
+// }
 
 
 Player(
@@ -89,10 +98,9 @@ Player(
     ]
 )
 
+
 function Game() {
 
-
-    
      // console.log(Cards(cardName))
      
      // function Deck(v, s) {
@@ -102,16 +110,21 @@ function Game() {
      // console.log(deck); //logs 52 cards
      // }
      
-
+        let hand = [];
       let deck = Deck.call(this);
-      
+
 
 }
 
 let currentGame = new Game();
 console.log(currentGame);
 
+    
+let drawBtn = document.querySelector('#draw-btn');
+drawBtn.addEventListener('click', () => {
 
+    alert(`You drew a(n) ${topCard.cardName}`);
+});
 
 
 
@@ -120,3 +133,5 @@ console.log(currentGame);
 // function Game() {
 
 // }
+
+
