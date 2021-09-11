@@ -1,56 +1,55 @@
+// @ts-check
+
 const suits = ['Spades', 'Hearts', 'Diamonds', 'Clubs'];
-const values = ['A', 'K', 'Q', 'J', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+//constructors are: Game, Cards, Deck, Player
 
-function Deck() { 
-    this.deck = [];
 
-    suits.forEach( suit => {
-        // console.log(suit)
-        values.forEach( value => {
-            // console.log(value)
-            this.deck.push({
-                suit: suit,
-                value: value,
-                cardName: `${value} of ${suit}`,
-            });
-    
-        })
 
-    })
-
-    // console.log(this.deck);
-    // console.log({olddeck:this.deck});
-
-        //shuffling deck
-        let currentIndex = this.deck.length,  randomIndex;
-      
-        // While there remain elements to shuffle...
-        while (currentIndex != 0) {
-      
-          // Pick a remaining element...
-          randomIndex = Math.floor(Math.random() * currentIndex);
-          currentIndex--;
-          // And swap it with the current element.
-          [this.deck[currentIndex], this.deck[randomIndex]] = [
-            this.deck[randomIndex], this.deck[currentIndex]];
-        }
-
-    // console.log({deck:this.deck});
+function Card({suit, rank}) {
+    this.suit = suit;
+    this.rank = ranks.indexOf(rank);
+    this.name = `${rank} of ${suit}`;
 };
 
 
-function Card(suit, value) {
-    this.card = {
-        suit: suit,
-        value: value,
-        cardName: `${value} of ${suit}`,
+function Deck() {
+    /**
+     * @type {Card[]}
+     */
+    this.cards = [];
+
+    suits.forEach( suit => {
+        // console.log(suit)
+        ranks.forEach( rank => {
+            // console.log(value)
+            this.cards.push(new Card({
+                suit: suit,
+                rank: rank,
+            }));
+        })
+    })
+};
+
+Deck.prototype.shuffle = function () {
+    let currentIndex = this.cards.length,  randomIndex;
+
+    // While there remain elements to shuffle...
+    while (currentIndex != 0) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        // And swap it with the current element.
+        [this.cards[currentIndex], this.cards[randomIndex]] = [
+            this.cards[randomIndex], this.cards[currentIndex]
+        ];
     }
+}
 
-    console.log({card: this.card});
- 
- };
 
-Card(suits[2], values[5]);
+
+
 
 
 
@@ -66,72 +65,145 @@ function Player(hand) {
     this.topCard = hand[hand.length - 1];
     this.score = hand.length;
     this.cardsInPlay = [];
+    this.hand = hand;
 
 
-console.log({topCard: this.topCard});
-console.log({score: this.score});
+
 }
 
 
-// if (Player.value === new Player.value) {
 
-// }
-
-
-Player(
-    [
-        {
-            suit: suits[0],
-            value: values[0],
-            cardName: `${values[0]} of ${suits[0]}`,
-        }, 
-        {
-            suit: suits[1],
-            value: values[1],
-            cardName: `${values[1]} of ${suits[1]}`,
-        }, 
-        {
-            suit: suits[2],
-            value: values[2],
-            cardName: `${values[2]} of ${suits[2]}`,
-        }, 
-    ]
-)
 
 
 function Game() {
 
-     // console.log(Cards(cardName))
-     
-     // function Deck(v, s) {
-     
-     
-     
-     // console.log(deck); //logs 52 cards
-     // }
-     
-        let hand = [];
-      let deck = Deck.call(this);
+
+
+    //setting up game here
+    //   Deck.call(this);
+    /**
+     * @type {Card[]}
+     */
+    this.player1Hand = [];
+    /**
+     * @type {Card[]}
+     */
+    this.player2Hand = [];
+    /**
+     * @type {Card[]}
+     */
+    this.stack = [];
+
+    this.player1 = new Player(this.player1Hand);
+    this.player2 = new Player(this.player2Hand);
+    this.deck = new Deck();
+
 
 
 }
 
+Game.prototype.deal = function () {
+    this.deck.cards.forEach((card, index) => {
+        if (index % 2 === 0) {
+            this.player1Hand.push(card);
+        } else {
+            this.player2Hand.push(card);
+        }
+    });
+}
+
+Game.prototype.start = function () {
+    this.deck.shuffle()
+    this.deal()
+}
+
+Game.prototype.draw = function () {
+    // draw player1
+    let card1 = this.drawCard(this.player1Hand);
+    //draw player2
+    let card2 = this.drawCard(this.player2Hand);
+
+    console.log('player 1 drew', card1);
+    console.log('player 2 drew', card2);
+
+    this.stack.push(card1, card2);
+
+    //compare the cards
+    if (card1.rank === card2.rank) {
+        //deal war
+        [card1, card2] = this.goToWar();
+    }
+    //give cards
+    // what if you draw at end of War?
+
+    if (card1.rank < card2.rank) {
+        this.player2Hand.unshift(...this.stack);
+        this.stack = [];
+
+        return "Player 2 wins!"
+
+    }
+
+     if (card1.rank > card2.rank) {
+         this.player1Hand.unshift(...this.stack);
+         this.stack = [];
+
+         return "Player 1 wins!"
+
+    }
+
+    return "Draw"
+}
+
+Game.prototype.drawCard = function (hand) {
+    let card1 = hand.pop();
+
+    this.stack.push(card1);
+    return card1;
+}
+
+Game.prototype.goToWar = function () {
+    console.log("goToWar")
+
+    this.drawCard(this.player1Hand);
+    this.drawCard(this.player1Hand);
+    this.drawCard(this.player1Hand);
+    let card1 = this.drawCard(this.player1Hand);
+
+    this.drawCard(this.player2Hand);;
+    this.drawCard(this.player2Hand);;
+    this.drawCard(this.player2Hand);;
+    let card2 = this.drawCard(this.player2Hand);
+
+
+    if (card1.rank === card2.rank) {
+        return this.goToWar();
+    }
+
+    return [card1, card2]
+}
+
+
+
+// let currentCard = new Card();
+// console.log({currentCard});
+
 let currentGame = new Game();
-console.log(currentGame);
+currentGame.start()
 
-    
-let drawBtn = document.querySelector('#draw-btn');
-drawBtn.addEventListener('click', () => {
+console.log(currentGame.draw(), currentGame);
 
-    alert(`You drew a(n) ${topCard.cardName}`);
-});
+// currentGame.deal(this.card);
 
 
 
-//constructors are: Game, Cards, Deck
-// const newGame = new Game();
-// function Game() {
+// let drawBtn = document.querySelector('#draw-btn');
+// drawBtn.addEventListener('click', () => {
 
-// }
+//     // alert(`You drew a(n) ${topCard.cardName}`);
+//     alert(`You drew a(n) ${this.topCard}`);
+// });
+
+
 
 
