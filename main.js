@@ -124,7 +124,7 @@ function Game() {
     */
     this.stack = [];
 
-    this.player1 = new Player("Fredna", this);
+    this.player1 = new Player("Vinnie", this);
     this.player2 = new Player("Debbie", this);
     this.deck = new Deck();
 
