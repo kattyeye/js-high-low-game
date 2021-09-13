@@ -9,10 +9,17 @@ let p2drew = document.querySelector('#p2-drew');
 let turnResult = document.querySelector('#turn-result');
 let warbox = document.querySelector('#warbox');
 
+let cardCount = document.querySelector('#numberOfCards');
+let cardCount2 = document.querySelector('#numberOfCards2');
+
+
 
 const suits = ['S', 'H', 'D', 'C'];
+const suitCodes = ['\u2660', '\u2666', '\u2663', '\u2665'];
+
 const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 //constructors are: Game, Cards, Deck, Player
+
 
 
 
@@ -29,7 +36,7 @@ function Deck() {
     */
     this.cards = [];
 
-    suits.forEach( suit => {
+    suitCodes.forEach( suit => {
         // console.log(suit)
         ranks.forEach( rank => {
             // console.log(value)
@@ -157,6 +164,7 @@ Game.prototype.flipCards = function () {
 
     if (card1) {
         p1drew.textContent = `${this.player1.name} drew ${card1.name}`
+
     } else {
             p1drew.textContent = `${this.player1.name} ran out of cards`
 
@@ -219,6 +227,10 @@ Game.prototype.giveCardsTo = function (player) {
 
     console.log(this.player1.hand.map(card => card.name).join(' '));
     console.log(this.player2.hand.map(card => card.name).join(' '));
+    console.log(this.player1.hand.length);
+    console.log(this.player2.hand.length);
+    cardCount.textContent = `${this.player1.name} has ${this.player1.hand.length} cards left`
+    cardCount2.textContent = `${this.player2.name} has ${this.player2.hand.length} cards left`
 
     this.stack = [];
 
@@ -228,6 +240,7 @@ Game.prototype.giveCardsTo = function (player) {
 
     return { type: 'go again', player }
 }
+
 
 
 Game.prototype.goToWar = function () {
